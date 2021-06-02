@@ -1,0 +1,18 @@
+﻿@model Paylocity.ViewModels.EmployeeViewModel
+
+<div class="employee-container form-inline">
+    <div class="form-group">
+        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+    </div>
+    <div class="form-group">
+        <label class="sr-only" for="FirstName">First Name</label>
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control employee-first-name", id = "", placeholder = "Employee First Name" })
+    </div>
+    <div class="form-group">
+        <label class="sr-only" for="LastName">Last Name</label>
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control employee-last-name", id = "", placeholder = "Employee Last Name" })
+    </div>
+    <button type="button" class="btn btn-primary" onclick="addDependent(this)">Add dependent</button>
+    <button type="button" class="btn btn-danger" onclick="removeEmployee(this)">Remove employee</button>
+</div>
+

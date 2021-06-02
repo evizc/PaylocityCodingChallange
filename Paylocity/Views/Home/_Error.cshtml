@@ -1,0 +1,10 @@
+﻿@model Exception
+<div class="alert alert-danger" role="alert">Oops! Something went wrong. Please try again or contact support. @Model.Message</div>
+<div class="row">
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-primary" onclick="editDetails()">Edit details</button>
+    </div>
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-primary" onclick="location.reload()">Start new estimate</button>
+    </div>
+</div>

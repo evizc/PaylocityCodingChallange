@@ -1,0 +1,120 @@
+﻿@model Paylocity.ViewModels.CostsPreviewViewModel
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Preview of Total Costs</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        @Html.LabelFor(m => m.Employees)
+        <span>@Model.Employees.Count</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <label for="Dependents">Total Dependents</label>
+        <span>@Model.Employees.Sum(x => x.Dependents.Count)</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        @Html.LabelFor(m => m.TotalCosts)
+        <span>@Model.TotalCosts.ToString("C2")</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <h2>Details</h2>
+    </div>
+</div>
+
+@foreach (var employee in Model.Employees)
+{
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3>@employee.FirstName @employee.LastName</h3>
+                </div>
+            </div>
+            <p>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span><strong>Bi-Monthly Salary: </strong>@employee.PaycheckAmount.ToString("C2")</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span><strong>Yearly Salary: </strong>@employee.SalaryBeforeDeductions.ToString("C2")</span>
+                    </div>
+                </div>
+            </p>
+            <p>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span><strong>Employee Benefit Cost:</strong> @employee.BenefitCost.ToString("C2")</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span><strong>Dependent Benefit Cost:</strong> @employee.DependentCost.ToString("C2")</span>
+                    </div>
+                </div>
+            <p>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span><strong>Total Dependent(s) Cost:</strong> @employee.Dependents.Sum(x => x.CalculateDependentBenefitTotal()).ToString("C2")</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span><strong>Total Benefit Cost:</strong> @employee.TotalBenefitsCost.ToString("C2")</span>
+                    </div>
+                </div>
+            </p>
+
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Benefit total cost</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@employee.FirstName @employee.LastName</td>
+                        <td>@employee.CalculateEmployeeBenefitTotal().ToString("C2")</td>
+                        <td>@employee.Description</td>
+                    </tr>
+                    @for (int i = 0; i < employee.Dependents.Count; i++)
+                    {
+                        <tr>
+                            <td>@employee.Dependents[i].FirstName @employee.Dependents[i].LastName</td>
+                            <td>@employee.Dependents[i].CalculateDependentBenefitTotal().ToString("C2")</td>
+                            <td>@employee.Dependents[i].Description</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3><strong>Salary After Deductions</strong> @employee.SalaryAfterDeductions.ToString("C2")</h3>
+                    </div>
+                </div>
+            </p>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-primary" onclick="editDetails()">Edit details</button>
+    </div>
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-primary" onclick="location.reload()">Start new estimate</button>
+    </div>
+</div>

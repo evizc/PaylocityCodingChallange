@@ -1,0 +1,121 @@
+﻿@model Paylocity.ViewModels.EmployeeViewModel
+
+@{
+    ViewBag.Title = "Employee Costs";
+}
+
+<div id="add-costs">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Estimate & Preview Costs</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <p>Welcome! On this page, you will be able to enter new employees along with their dependents and get and estimated preview of the total costs. <br/>Click the button below to add a new employee.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-primary" onclick="addNewEmployee()">Add New Employee</button>
+        </div>
+    </div>
+</div>
+<div class="row calculate-costs">
+    <div class="col-sm-2">
+        <button type="button" class="btn btn-primary" onclick="previewCosts()">Preview costs</button>
+    </div>
+</div>
+<div id="employee-template">
+    @Html.Partial("_Employee", Model)
+</div>
+<div id="dependent-template">
+    @Html.Partial("_Dependent")
+</div>
+<div id="preview-costs"></div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            //Validate for letters only
+            $("input").keypress(function (event) {
+                var charCode = event.keyCode;
+                if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8)
+                    return true;
+                else
+                    event.preventDefault();
+            });
+        });
+
+        function addNewEmployee() {
+            const employeeTemplate = $('#employee-template').html();
+            $('#add-costs').append(employeeTemplate);
+            Validate();
+        }
+
+        function addDependent(element) {
+            const dependentTemplate = $('#dependent-template').html();
+            $(element.closest('.employee-container')).append(dependentTemplate);
+        }
+
+        function removeDependent(element) {
+            element.closest('.dependent').remove();
+        }
+
+        function removeEmployee(element) {
+            element.closest('.employee-container').remove();
+        }
+
+        function Validate() {
+            if ($('#add-costs .employee-container').length > 0) {
+                $(".calculate-costs").show();
+            } else {
+                $(".calculate-costs").hide();
+            }
+        }
+
+        function previewCosts() {
+            let employees = [];
+
+            $('#add-costs .employee-container').each(function (i, obj) {
+                if ($(obj).find(".employee-first-name").val() == "") return true; //Validate employee first name
+
+                let employee = {
+                    FirstName: $(obj).find(".employee-first-name").val(),
+                    LastName: $(obj).find(".employee-last-name").val(),
+                    Dependents: []
+                }
+
+                $(obj).find('.dependent').each(function (i, obj) {
+                    if ($(obj).find(".first-name").val() == "") return true; //Validate dependent first name
+                    let dependent = {
+                        FirstName: $(obj).find(".first-name").val(),
+                        LastName: $(obj).find(".last-name").val()
+                    }
+                    employee.Dependents.push(dependent);
+                });
+                employees.push(employee);
+            });
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PreviewCosts","Home")',
+                data: { employees },
+                success: function (data) {
+                    $(".calculate-costs").hide();
+                    $("#add-costs").slideUp();
+                    $("#preview-costs").empty();
+                    $("#preview-costs").html(data);
+                    $("#preview-costs").slideDown();
+                }
+            });
+        }
+
+        function editDetails() {
+            Validate();
+            $("#add-costs").slideDown();
+            $("#preview-costs").slideUp();
+        }
+    </script>
+}
